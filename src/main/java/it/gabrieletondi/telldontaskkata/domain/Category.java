@@ -7,7 +7,7 @@ public class Category {
     private BigDecimal taxPercentage;
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public void setName(String name) {
@@ -15,7 +15,7 @@ public class Category {
     }
 
     public BigDecimal getTaxPercentage() {
-        return taxPercentage;
+        return this.taxPercentage;
     }
 
     public void setTaxPercentage(BigDecimal taxPercentage) {

@@ -23,12 +23,8 @@ public class OrderCreationUseCase {
     }
 
     public void run(SellItemsRequest request) {
-        Order order = new Order();
-        order.setStatus(OrderStatus.CREATED);
-        order.setItems(new ArrayList<>());
-        order.setCurrency("EUR");
-        order.setTotal(new BigDecimal("0.00"));
-        order.setTax(new BigDecimal("0.00"));
+        Order order = new Order(new BigDecimal("0.00"),"EUR",new ArrayList<>(), new BigDecimal("0.00"), OrderStatus.CREATED);
+
 
         for (SellItemRequest itemRequest : request.getRequests()) {
             Product product = productCatalog.getByName(itemRequest.getProductName());
@@ -42,14 +38,12 @@ public class OrderCreationUseCase {
                 final BigDecimal taxedAmount = unitaryTaxedAmount.multiply(BigDecimal.valueOf(itemRequest.getQuantity())).setScale(2, HALF_UP);
                 final BigDecimal taxAmount = unitaryTax.multiply(BigDecimal.valueOf(itemRequest.getQuantity()));
 
-                final OrderItem orderItem = new OrderItem();
-                orderItem.setProduct(product);
-                orderItem.setQuantity(itemRequest.getQuantity());
-                orderItem.setTax(taxAmount);
-                orderItem.setTaxedAmount(taxedAmount);
-                order.getItems().add(orderItem);
+                final OrderItem orderItem = new OrderItem(product, itemRequest.getQuantity(), taxedAmount, taxAmount);
+
+                order.addItems(orderItem);
 
                 order.setTotal(order.getTotal().add(taxedAmount));
+
                 order.setTax(order.getTax().add(taxAmount));
             }
         }
