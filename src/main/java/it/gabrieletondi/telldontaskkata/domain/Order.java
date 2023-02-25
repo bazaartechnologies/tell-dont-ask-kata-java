@@ -3,6 +3,8 @@ package it.gabrieletondi.telldontaskkata.domain;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static it.gabrieletondi.telldontaskkata.domain.OrderStatus.CREATED;
+
 public class Order {
     private BigDecimal total;
     private String currency;
@@ -16,7 +18,7 @@ public class Order {
     }
 
 
-    public void setTotal(BigDecimal total) {
+    private void setTotal(java.math.BigDecimal total) {
         this.total = total;
     }
 
@@ -24,7 +26,7 @@ public class Order {
         return currency;
     }
 
-    public void setCurrency(String currency) {
+    private void setCurrency(String currency) {
         this.currency = currency;
     }
 
@@ -32,7 +34,7 @@ public class Order {
         return items;
     }
 
-    public void setItems(List<OrderItem> items) {
+    private void setItems(java.util.List<it.gabrieletondi.telldontaskkata.domain.OrderItem> items) {
         this.items = items;
     }
 
@@ -40,11 +42,11 @@ public class Order {
         return tax;
     }
 
-    public void setTax(BigDecimal tax) {
+    private void setTax(java.math.BigDecimal tax) {
         this.tax = tax;
     }
 
-    public OrderStatus getStatus() {
+    private OrderStatus getStatus() {
         return status;
     }
 
@@ -58,5 +60,42 @@ public class Order {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public void addItem(OrderItem item) {
+        items.add(item);
+    }
+
+    public void addTotal(BigDecimal value) {
+        total = total.add(value);
+    }
+
+    public void addTax(java.math.BigDecimal taxAmount) {
+        tax = tax.add(taxAmount);
+    }
+
+    public Order initializeOrder() {
+        setStatus(OrderStatus.CREATED);
+        setItems(new java.util.ArrayList<>());
+        setCurrency("EUR");
+        setTotal(new java.math.BigDecimal("0.00"));
+        setTax(new java.math.BigDecimal("0.00"));
+        return this;
+    }
+
+    public boolean isShipped() {
+        return getStatus().equals(OrderStatus.SHIPPED);
+    }
+
+    public boolean isRejected() {
+        return getStatus().equals(OrderStatus.REJECTED);
+    }
+
+    public boolean isApproved() {
+        return getStatus().equals(OrderStatus.APPROVED);
+    }
+
+    public boolean isCreated() {
+        return getStatus().equals(CREATED);
     }
 }
