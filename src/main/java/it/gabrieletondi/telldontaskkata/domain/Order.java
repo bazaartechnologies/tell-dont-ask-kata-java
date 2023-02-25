@@ -77,4 +77,16 @@ public class Order {
     public void addItems(OrderItem item){
         this.items.add(item);
     }
+
+    public void addToTotal(BigDecimal amount){
+        this.total.add(amount);
+    }
+
+    public void addTaxAmount(BigDecimal taxedAmount) {
+        this.total = this.total.add(taxedAmount);
+    }
+
+    public void addTax(BigDecimal taxAmount) {
+        setTax(getTax().add(taxAmount));
+    }
 }

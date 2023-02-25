@@ -28,26 +28,24 @@ public class OrderCreationUseCase {
 
         for (SellItemRequest itemRequest : request.getRequests()) {
             Product product = productCatalog.getByName(itemRequest.getProductName());
-
             if (product == null) {
                 throw new UnknownProductException();
             }
             else {
-                final BigDecimal unitaryTax = product.getPrice().divide(valueOf(100)).multiply(product.getCategory().getTaxPercentage()).setScale(2, HALF_UP);
-                final BigDecimal unitaryTaxedAmount = product.getPrice().add(unitaryTax).setScale(2, HALF_UP);
-                final BigDecimal taxedAmount = unitaryTaxedAmount.multiply(BigDecimal.valueOf(itemRequest.getQuantity())).setScale(2, HALF_UP);
-                final BigDecimal taxAmount = unitaryTax.multiply(BigDecimal.valueOf(itemRequest.getQuantity()));
+                final BigDecimal taxedAmount = product.calculateTaxedAmt(itemRequest);
+                final BigDecimal taxAmount = product.calculateTaxAmt(itemRequest);
 
                 final OrderItem orderItem = new OrderItem(product, itemRequest.getQuantity(), taxedAmount, taxAmount);
 
                 order.addItems(orderItem);
 
-                order.setTotal(order.getTotal().add(taxedAmount));
+                order.addTaxAmount(taxedAmount);
 
-                order.setTax(order.getTax().add(taxAmount));
+                order.addTax(taxAmount);
             }
         }
 
         orderRepository.save(order);
     }
+
 }
